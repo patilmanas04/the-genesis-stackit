@@ -70,4 +70,14 @@ Existing Q&A platforms are often bloated or cluttered, making it hard for users 
 ## System UX-Flow Diagram
 
 ![StackIt UX-Flow Diagram](./Assets/Ux-flow%20StackIt.png)
->>>>>>> 1330f376e3b79923d5779525072f42b0ef8ca54b
+
+
+| Feature                      | StackIt | Stack Overflow | Quora | Reddit | Discord |
+| ---------------------------- | ------- | -------------- | ----- | ------ | ------- |
+| Minimal UI                   | ✅       | ❌              | ❌     | ❌      | ❌       |
+| Rich Text Editor             | ✅       | ⚠️ Limited     | ❌     | ⚠️     | ❌       |
+| Voting + Answer Acceptance   | ✅       | ✅              | ❌     | ⚠️     | ❌       |
+| Tag-Based Filtering          | ✅       | ✅              | ❌     | ⚠️     | ❌       |
+| Real-Time Notifications      | ✅       | ⚠️ Limited     | ✅     | ✅      | ✅       |
+| Admin Moderation Tools       | ✅       | ✅              | ✅     | ⚠️     | ⚠️      |
+| Spam/AI Detection (Optional) | ✅       | ❌              | ❌     | ❌      | ❌       |
