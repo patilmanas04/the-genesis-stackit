@@ -4,6 +4,9 @@ import { createContext, useState, ReactNode } from "react";
 interface AuthContextType {
   userLoggedIn: (email: string, password: string) => Promise<void>;
   userSignup: (username: string, email: string, password: string) => Promise<boolean>;
+  fetchUserDetails: () => Promise<any>;
+  getAllQuestions: () => Promise<any>;
+  questions: Record<string, any>;
 }
 
 // Create context with default empty values
@@ -16,6 +19,8 @@ interface UserProviderProps {
 
 const UserProvider = ({ children }: UserProviderProps) => {
   const [userDetails, setUserDetails] = useState<Record<string, any>>({});
+  const [questions, setquestions] = useState<Record<string, any>>({});
+
 
   const userLoggedIn = async (email: string, password: string): Promise<void> => {
     const response = await fetch("http://localhost:5000/api/auth/login", {
@@ -65,13 +70,27 @@ const UserProvider = ({ children }: UserProviderProps) => {
 
     if (response.ok) {
       const data = await response.json();
-      setUserDetails(data);
+     return data;
     }
   };
 
-  // 
+  // get all questions
+  const getAllQuestions = async () => {
+    const response = await fetch("http://localhost:5000/api/user/get-all-questions", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      setquestions(data.questions);
+      return data;
+    }
+  };
   return (
-    <userContext.Provider value={{ userLoggedIn, userSignup }}>
+    <userContext.Provider value={{ userLoggedIn, userSignup, fetchUserDetails, getAllQuestions,questions }}>
       {children}
     </userContext.Provider>
   );

@@ -5,6 +5,8 @@ StackIt is a minimal question-and-answer platform that supports collaborative  l
 
 ## StackIt Database Schema 
 [Visit Database Schema](https://www.figma.com/board/u1rriHQsL7FRbe2oNbrkNH/StackIt-Database-Schema?node-id=0-1&t=g4P61BThnGMWlZnd-1)
+<<<<<<< HEAD
+=======
 
 ## Problem Statement
 
@@ -53,6 +55,19 @@ Existing Q&A platforms are often bloated or cluttered, making it hard for users 
 
 ---
 
-## System Architecture
+## System Architecture 
 
-![StackIt Architecture Diagram](./assets/stackit-ui.png)
+![StackIt Architecture Diagram](./Assets//Architecture%20Diagram.png)
+
+## System Sequence Diagram
+
+![StackIt Sequence Diagram](./Assets/Sequence%20Diagram.png)
+
+## System Deployment Diagram
+
+![StackIt Deployment Diagram](./Assets//Deployment%20Diagram.png)
+
+## System UX-Flow Diagram
+
+![StackIt UX-Flow Diagram](./Assets/Ux-flow%20StackIt.png)
+>>>>>>> 1330f376e3b79923d5779525072f42b0ef8ca54b
