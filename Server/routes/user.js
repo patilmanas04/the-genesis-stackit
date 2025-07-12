@@ -26,6 +26,20 @@ router.post('/ask-question', fetchUserDetails, async (req, res) => {
   }
 })
 
+router.get("/get-all-questions", async (req, res) => {
+  let success = false;
+
+  try {
+    const questions = await Question.find().populate('userId', 'username profilePhoto').sort({ createdAt: -1 });
+    success = true;
+    res.status(200).json({ success, questions });
+  }
+  catch (error) {
+    console.log(error.message);
+    return res.status(500).json({ success, message: "Internal Server Error" });
+  }
+})
+
 router.post('/add-answer', fetchUserDetails, async (req, res) => {
   let success = false;
   const { questionId, content } = req.body;
