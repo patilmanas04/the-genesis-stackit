@@ -16,10 +16,22 @@ const answerSchema = new Schema({
     type: String,
     required: true,
   },
-  votes: {
+  upwardVote: {
     type: Number,
     default: 0
-  }
+  },
+  downwardVote: {
+    type: Number,
+    default: 0
+  },
+  likedBy: [{
+    type: Schema.Types.ObjectId,
+    ref: 'User'
+  }],
+  dislikedBy: [{
+    type: Schema.Types.ObjectId,
+    ref: 'User'
+  }],
 }, {
   timestamps: true // Automatically manages createdAt and updatedAt
 });

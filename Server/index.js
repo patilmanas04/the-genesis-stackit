@@ -15,7 +15,7 @@ app.get('/', (req, res) => {
 })
 
 app.use('/api/auth', require('./routes/auth'))
-// app.use('/api/media', require('./routes/media'))
+app.use('/api/user', require('./routes/user'))
 
 app.listen(port, () => {
   console.log(`Server is running on port http://localhost:${port}`)
