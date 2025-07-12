@@ -1,16 +1,23 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
-import "./App.css";
+import React from "react";
+import { Routes, Route } from "react-router-dom";
+import Navbar from "./Components/Navbar"; // adjust path if needed
+import Footer from "./Components/Footer";
+import Home from "./Components/Home";
+import QuestionDetail from "./Components/QuestionDetail";
 
-function App() {
-  const [count, setCount] = useState(0);
-
+const App = () => {
   return (
-    <>
-      <h1>StackIt</h1>
-    </>
+    <div>
+      <Navbar />
+      <main style={{ padding: "60px", fontFamily: "sans-serif" }}>
+        <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/questions/:id" element={<QuestionDetail />} />
+    </Routes>
+      </main>
+      <Footer/>
+    </div>
   );
-}
+};
 
 export default App;
