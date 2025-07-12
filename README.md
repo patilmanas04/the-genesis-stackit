@@ -5,8 +5,6 @@ StackIt is a minimal question-and-answer platform that supports collaborative  l
 
 ## StackIt Database Schema 
 [Visit Database Schema](https://www.figma.com/board/u1rriHQsL7FRbe2oNbrkNH/StackIt-Database-Schema?node-id=0-1&t=g4P61BThnGMWlZnd-1)
-<<<<<<< HEAD
-=======
 
 ## Problem Statement
 
