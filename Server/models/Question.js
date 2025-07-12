@@ -15,7 +15,6 @@ const questionSchema = new Schema({
   description: {
     type: String,
     required: true
-    // Rich text handled on frontend; store as HTML string or markdown
   },
   tags: {
     type: [String],
