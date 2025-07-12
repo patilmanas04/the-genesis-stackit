@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   Bell,
@@ -20,7 +20,9 @@ import {
 } from "./ui/dropdown-menu";
 import { Badge } from "./ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { userContext } from "../../context/userProvider";
 
+import logo from "../../public/new-logo.svg"
 interface UserInfo {
   name: string;
   email: string;
@@ -33,23 +35,30 @@ export function Navigation() {
   const [user, setUser] = useState<UserInfo | null>(null);
   const [notificationCount, setNotificationCount] = useState(3);
   const navigate = useNavigate();
+  
+const context = useContext(userContext);
+
+const { fetchUserDetails } = context || {};
 
   useEffect(() => {
     // Check localStorage for token
     const token = localStorage.getItem("Auth-Token");
     if (token) {
       setIsLoggedIn(true);
+      fetchUserDetails().then((data) => {
+        if (data) {
+          setUser({
+            name: data.name || "Guest",
+            email: data.email || "guest123@gmail.com",
+            avatar: data.avatar || "",
+          });
+          localStorage.setItem("User-Info", JSON.stringify(data));
+        }
+      });
       const storedUser = localStorage.getItem("User-Info");
       if (storedUser) {
         setUser(JSON.parse(storedUser));
-      } else {
-        // Mock user data if not in storage
-        setUser({
-          name: "John Doe",
-          email: "john.doe@example.com",
-          avatar: "", // provide avatar URL if any
-        });
-      }
+      } 
     } else {
       setIsLoggedIn(false);
       setUser(null);
@@ -69,12 +78,8 @@ export function Navigation() {
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-stackit-primary">
-              <MessageSquare className="h-5 w-5 text-white" />
-            </div>
-            <span className="text-xl font-bold text-stackit-primary">
-              StackIt
-            </span>
+              <img src={logo} alt="StackIt Logo" className="h-50 w-20" />
+            
           </Link>
 
           {/* Search Bar */}
@@ -135,11 +140,7 @@ export function Navigation() {
                           <AvatarImage src={user.avatar} alt={user.name} />
                         ) : (
                           <AvatarFallback className="bg-stackit-primary text-white">
-                            {user.name
-                              .split(" ")
-                              .map((n) => n[0])
-                              .join("")
-                              .toUpperCase()}
+                            {user.name}
                           </AvatarFallback>
                         )}
                       </Avatar>

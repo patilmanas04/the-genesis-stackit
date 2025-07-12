@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Plus, Filter, TrendingUp, Clock, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { QuestionCard } from "@/components/QuestionCard";
+// import { userContext } from "context/userProvider";
 
 const mockQuestions = [
   {
@@ -94,10 +95,28 @@ const mockQuestions = [
   },
 ];
 
+
+
 export default function Index() {
+  // const context  = useContext(userContext)
+
+  // const {getAllQuestions, questions}  = context || {};
+
   const [selectedTab, setSelectedTab] = useState("latest");
   const isLoggedIn = true; // Mock logged in state
 
+  // useEffect(() => {
+  //   const fetchQuestions = async () => {
+  //     if (getAllQuestions) {
+  //       try {
+  //         const questions = await getAllQuestions();
+  //         console.log("Fetched Questions:", questions);
+  //       } catch (error) {
+  //         console.error("Error fetching questions:", error);
+  //       }
+  //     }
+  //   };
+  // }, []);
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
