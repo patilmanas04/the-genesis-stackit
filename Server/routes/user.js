@@ -2,6 +2,7 @@ const express = require('express')
 const router = express.Router()
 const Question = require('../models/Question')
 const Answer = require('../models/Answer')
+const User = require('../models/User')
 const fetchUserDetails = require('../middleware/fetchUser')
 
 router.post('/ask-question', fetchUserDetails, async (req, res) => {
@@ -144,6 +145,24 @@ router.post("/downvote-answer", fetchUserDetails, async (req, res) => {
     await answer.save();
     success = true;
     res.json({ success, message: "Answer downvoted successfully", answer });
+  }
+  catch (error) {
+    console.log(error.message);
+    return res.status(500).json({ success, message: "Internal Server Error" });
+  }
+})
+
+router.get("/getuser", fetchUserDetails, async (req, res) => {
+  let success = false;
+  const userId = req.user.id;
+
+  try {
+    const user = await User.findById(userId).select('-password');
+    if (!user) {
+      return res.status(404).json({ success, message: "User not found" });
+    }
+    success = true;
+    res.json({ success, user });
   }
   catch (error) {
     console.log(error.message);
