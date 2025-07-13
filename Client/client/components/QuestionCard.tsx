@@ -42,36 +42,13 @@ export function QuestionCard({
   question,
   isLoggedIn = false,
 }: QuestionCardProps) {
-  const [userVote, setUserVote] = useState<"up" | "down" | null>(null);
-  const [currentVotes, setCurrentVotes] = useState(question.votes);
-
-  const handleVote = (voteType: "up" | "down") => {
-    if (!isLoggedIn) return;
-
-    let newVotes = currentVotes;
-    let newUserVote: "up" | "down" | null = voteType;
-
-    if (userVote === voteType) {
-      // Remove vote
-      newUserVote = null;
-      newVotes = voteType === "up" ? currentVotes - 1 : currentVotes + 1;
-    } else if (userVote === null) {
-      // Add new vote
-      newVotes = voteType === "up" ? currentVotes + 1 : currentVotes - 1;
-    } else {
-      // Change vote
-      newVotes = voteType === "up" ? currentVotes + 2 : currentVotes - 2;
-    }
-
-    setUserVote(newUserVote);
-    setCurrentVotes(newVotes);
-  };
+  console.log("Rendering QuestionCard for:", question);
 
   const formatTimeAgo = (dateString: string) => {
     const date = new Date(dateString);
     const now = new Date();
     const diffInHours = Math.floor(
-      (now.getTime() - date.getTime()) / (1000 * 60 * 60),
+      (now.getTime() - date.getTime()) / (1000 * 60 * 60)
     );
 
     if (diffInHours < 1) return "just now";
@@ -84,55 +61,11 @@ export function QuestionCard({
     <Card className="hover:shadow-md transition-shadow duration-200">
       <CardContent className="p-6">
         <div className="flex gap-4">
-          {/* Voting Section */}
-          <div className="flex flex-col items-center space-y-2 min-w-[60px]">
-            <Button
-              variant="ghost"
-              size="sm"
-              className={cn(
-                "p-1 h-8 w-8 rounded-full",
-                userVote === "up"
-                  ? "bg-vote-up text-white hover:bg-vote-up/90"
-                  : "hover:bg-vote-up/10 hover:text-vote-up",
-                !isLoggedIn && "cursor-not-allowed opacity-50",
-              )}
-              onClick={() => handleVote("up")}
-              disabled={!isLoggedIn}
-            >
-              <ChevronUp className="h-5 w-5" />
-            </Button>
-
-            <span
-              className={cn(
-                "text-lg font-semibold",
-                currentVotes > 0 && "text-vote-up",
-                currentVotes < 0 && "text-vote-down",
-              )}
-            >
-              {currentVotes}
-            </span>
-
-            <Button
-              variant="ghost"
-              size="sm"
-              className={cn(
-                "p-1 h-8 w-8 rounded-full",
-                userVote === "down"
-                  ? "bg-vote-down text-white hover:bg-vote-down/90"
-                  : "hover:bg-vote-down/10 hover:text-vote-down",
-                !isLoggedIn && "cursor-not-allowed opacity-50",
-              )}
-              onClick={() => handleVote("down")}
-              disabled={!isLoggedIn}
-            >
-              <ChevronDown className="h-5 w-5" />
-            </Button>
-          </div>
-
           {/* Question Content */}
           <div className="flex-1">
             <div className="space-y-3">
               {/* Title */}
+
               <Link to={`/questions/${question.id}`} className="block">
                 <h3 className="text-lg font-semibold text-foreground hover:text-stackit-primary transition-colors line-clamp-2">
                   {question.title}
@@ -165,7 +98,7 @@ export function QuestionCard({
                     <span
                       className={cn(
                         question.hasAcceptedAnswer &&
-                          "text-stackit-success font-medium",
+                          "text-stackit-success font-medium"
                       )}
                     >
                       {question.answers} answers
@@ -173,11 +106,6 @@ export function QuestionCard({
                     {question.hasAcceptedAnswer && (
                       <Check className="h-4 w-4 text-stackit-success" />
                     )}
-                  </div>
-
-                  <div className="flex items-center space-x-1">
-                    <Eye className="h-4 w-4" />
-                    <span>{question.views} views</span>
                   </div>
 
                   <div className="flex items-center space-x-1">
@@ -203,9 +131,6 @@ export function QuestionCard({
                   <div className="flex flex-col">
                     <span className="font-medium text-foreground">
                       {question.author.name}
-                    </span>
-                    <span className="text-xs">
-                      {question.author.reputation.toLocaleString()} rep
                     </span>
                   </div>
                 </div>

@@ -1,14 +1,6 @@
 import { useState, useEffect, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import {
-  Bell,
-  Search,
-  Plus,
-  User,
-  LogOut,
-  Settings,
-  MessageSquare,
-} from "lucide-react";
+import { Bell, Search, Plus, User, LogOut, Settings } from "lucide-react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import {
@@ -21,49 +13,43 @@ import {
 import { Badge } from "./ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { userContext } from "../../context/userProvider";
+import logo from "../../public/new-logo.svg";
 
-import logo from "../../public/new-logo.svg"
 interface UserInfo {
   name: string;
   email: string;
   avatar?: string;
 }
 
-export function Navigation() {
+export function Navigation({ open }: { open: (state: boolean) => void }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState<UserInfo | null>(null);
   const [notificationCount, setNotificationCount] = useState(3);
   const navigate = useNavigate();
-  
-const context = useContext(userContext);
-
-const { fetchUserDetails } = context || {};
+  const context = useContext(userContext);
+  const { fetchUserDetails } = context || {};
 
   useEffect(() => {
-    // Check localStorage for token
     const token = localStorage.getItem("Auth-Token");
+    console.log("Auth - Token : ", token);
     if (token) {
       setIsLoggedIn(true);
-      fetchUserDetails().then((data) => {
+      fetchUserDetails?.().then((data) => {
         if (data) {
           setUser({
-            name: data.name || "Guest",
-            email: data.email || "guest123@gmail.com",
-            avatar: data.avatar || "",
+            name: data.userDetails.username || "Guest",
+            email: data.userDetails.email || "guest123@gmail.com",
+            avatar: data.userDetails.profilePhoto || "",
           });
           localStorage.setItem("User-Info", JSON.stringify(data));
         }
       });
-      const storedUser = localStorage.getItem("User-Info");
-      if (storedUser) {
-        setUser(JSON.parse(storedUser));
-      } 
     } else {
       setIsLoggedIn(false);
       setUser(null);
     }
-  }, []);
+  }, [fetchUserDetails]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -71,18 +57,16 @@ const { fetchUserDetails } = context || {};
       navigate(`/search?q=${encodeURIComponent(searchQuery)}`);
     }
   };
+  console.log("isLoggedIn : ", isLoggedIn); // false then true 
 
   return (
     <nav className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
-          {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
-              <img src={logo} alt="StackIt Logo" className="h-50 w-20" />
-            
+            <img src={logo} alt="StackIt Logo" className="h-50 w-20" />
           </Link>
 
-          {/* Search Bar */}
           <form onSubmit={handleSearch} className="flex-1 max-w-md mx-8">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
@@ -96,22 +80,12 @@ const { fetchUserDetails } = context || {};
             </div>
           </form>
 
-          {/* Actions */}
           <div className="flex items-center space-x-2">
+            <Link to="/" className="text-sm font-medium hover:underline">
+              Home
+            </Link>
             {isLoggedIn && user ? (
               <>
-                {/* Ask Question Button */}
-                <Button
-                  asChild
-                  className="hidden sm:flex bg-stackit-primary hover:bg-stackit-primary/90"
-                >
-                  <Link to="/ask">
-                    <Plus className="h-4 w-4 mr-2" />
-                    Ask Question
-                  </Link>
-                </Button>
-
-                {/* Notifications */}
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" size="icon" className="relative">
@@ -124,55 +98,41 @@ const { fetchUserDetails } = context || {};
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="w-80">
-                    {/* Notification items here */}
+                    <div className="p-4 text-sm text-muted-foreground">
+                      You have {notificationCount} new notifications.
+                    </div>
                   </DropdownMenuContent>
                 </DropdownMenu>
 
-                {/* User Menu */}
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button
                       variant="ghost"
-                      className="relative h-8 w-8 rounded-full"
+                      className="flex items-center space-x-2 p-1"
                     >
                       <Avatar className="h-8 w-8">
                         {user.avatar ? (
                           <AvatarImage src={user.avatar} alt={user.name} />
                         ) : (
                           <AvatarFallback className="bg-stackit-primary text-white">
-                            {user.name}
+                            {user.name.charAt(0)}
                           </AvatarFallback>
                         )}
                       </Avatar>
+                      <span className="text-sm font-medium">{user.name}</span>
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
-                    <div className="flex items-center justify-start gap-2 p-2">
-                      <div className="flex flex-col space-y-1 leading-none">
-                        <p className="font-medium">{user.name}</p>
-                        <p className="w-[200px] truncate text-sm text-muted-foreground">
-                          {user.email}
-                        </p>
-                      </div>
-                    </div>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem asChild>
                       <Link to="/profile" className="cursor-pointer">
-                        <User className="mr-2 h-4 w-4" />
-                        Profile
-                      </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <Link to="/settings" className="cursor-pointer">
-                        <Settings className="mr-2 h-4 w-4" />
-                        Settings
+                        <User className="mr-2 h-4 w-4" /> Profile
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem
                       className="cursor-pointer text-destructive"
                       onClick={() => {
-                        // On logout, clear token & user data
                         localStorage.removeItem("Auth-Token");
                         localStorage.removeItem("User-Info");
                         setIsLoggedIn(false);
@@ -180,22 +140,15 @@ const { fetchUserDetails } = context || {};
                         navigate("/");
                       }}
                     >
-                      <LogOut className="mr-2 h-4 w-4" />
-                      Log out
+                      <LogOut className="mr-2 h-4 w-4" /> Log out
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
               </>
             ) : (
               <div className="flex items-center space-x-2">
-                <Button variant="ghost" asChild>
-                  <Link to="/login">Log in</Link>
-                </Button>
-                <Button
-                  asChild
-                  className="bg-stackit-primary hover:bg-stackit-primary/90"
-                >
-                  <Link to="/signup">Sign up</Link>
+                <Button variant="ghost" onClick={() => open(true)}>
+                  Log in
                 </Button>
               </div>
             )}

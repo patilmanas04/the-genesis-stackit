@@ -75,8 +75,9 @@ export default function AskQuestion() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const values = { title, description, tags: selectedTags };
     // Here you would typically submit the question to your API
-    console.log({ title, description, tags: selectedTags });
+    console.log("values : ", values);
     navigate("/");
   };
 

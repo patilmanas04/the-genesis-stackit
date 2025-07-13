@@ -5,118 +5,24 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { QuestionCard } from "@/components/QuestionCard";
-// import { userContext } from "context/userProvider";
-
-const mockQuestions = [
-  {
-    id: "1",
-    title: "How to center a div in CSS using modern techniques?",
-    description:
-      "I've been struggling with centering elements in CSS. I know about flexbox and grid, but I'm wondering what the best modern approach is for different scenarios...",
-    author: {
-      name: "Sarah Johnson",
-      avatar: undefined,
-      reputation: 2547,
-    },
-    tags: ["css", "html", "flexbox", "grid"],
-    votes: 23,
-    answers: 5,
-    views: 1204,
-    createdAt: "2024-01-15T10:30:00Z",
-    hasAcceptedAnswer: true,
-  },
-  {
-    id: "2",
-    title: "React useState vs useReducer: When to use each?",
-    description:
-      "I'm building a complex React application and I'm wondering when I should use useState vs useReducer for state management. What are the best practices?",
-    author: {
-      name: "Michael Chen",
-      avatar: undefined,
-      reputation: 4892,
-    },
-    tags: ["react", "hooks", "state-management", "javascript"],
-    votes: 45,
-    answers: 8,
-    views: 2876,
-    createdAt: "2024-01-15T08:15:00Z",
-    hasAcceptedAnswer: false,
-  },
-  {
-    id: "3",
-    title: "Best practices for API error handling in TypeScript",
-    description:
-      "I'm working on a TypeScript project with multiple API calls. What are the best practices for handling errors consistently across the application?",
-    author: {
-      name: "Alex Rodriguez",
-      avatar: undefined,
-      reputation: 1234,
-    },
-    tags: ["typescript", "api", "error-handling", "best-practices"],
-    votes: 12,
-    answers: 3,
-    views: 567,
-    createdAt: "2024-01-15T12:45:00Z",
-    hasAcceptedAnswer: false,
-  },
-  {
-    id: "4",
-    title: "Docker vs Kubernetes for small development teams",
-    description:
-      "Our team of 5 developers is looking to containerize our applications. Should we go with Docker Compose or invest time in learning Kubernetes?",
-    author: {
-      name: "Emma Wilson",
-      avatar: undefined,
-      reputation: 6789,
-    },
-    tags: ["docker", "kubernetes", "devops", "containers"],
-    votes: 67,
-    answers: 12,
-    views: 4521,
-    createdAt: "2024-01-14T16:20:00Z",
-    hasAcceptedAnswer: true,
-  },
-  {
-    id: "5",
-    title: "SQL vs NoSQL: Choosing the right database for my project",
-    description:
-      "I'm starting a new project and need to decide between SQL and NoSQL databases. The project involves user management, real-time chat, and analytics...",
-    author: {
-      name: "David Park",
-      avatar: undefined,
-      reputation: 3456,
-    },
-    tags: ["database", "sql", "nosql", "mongodb", "postgresql"],
-    votes: 34,
-    answers: 9,
-    views: 1893,
-    createdAt: "2024-01-14T14:10:00Z",
-    hasAcceptedAnswer: false,
-  },
-];
-
-
+import { userContext } from "../../context/userProvider";
 
 export default function Index() {
-  // const context  = useContext(userContext)
-
-  // const {getAllQuestions, questions}  = context || {};
-
+  const context = useContext(userContext);
+  const { getAllQuestions, getStaticalCounts } = context || {};
   const [selectedTab, setSelectedTab] = useState("latest");
-  const isLoggedIn = true; // Mock logged in state
+  const [QuestionListData, setQuestionListData] = useState([]);
+  const [countListData, setCountListData] = useState<any>([]);
+  useEffect(() => {
+    getAllQuestions?.().then((questions) => {
+      setQuestionListData(questions);
+    });
+    getStaticalCounts?.().then((count) => {
+      setCountListData(count.counts);
+    });
+  }, []);
 
-  // useEffect(() => {
-  //   const fetchQuestions = async () => {
-  //     if (getAllQuestions) {
-  //       try {
-  //         const questions = await getAllQuestions();
-  //         console.log("Fetched Questions:", questions);
-  //       } catch (error) {
-  //         console.error("Error fetching questions:", error);
-  //       }
-  //     }
-  //   };
-  // }, []);
+  console.log(countListData);
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
@@ -130,18 +36,6 @@ export default function Index() {
               Join our community of developers helping each other solve
               problems, share knowledge, and grow together.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-4">
-              <Button
-                asChild
-                size="lg"
-                className="bg-stackit-primary hover:bg-stackit-primary/90"
-              >
-                <Link to="/ask">
-                  <Plus className="h-5 w-5 mr-2" />
-                  Ask a Question
-                </Link>
-              </Button>
-            </div>
           </div>
         </div>
       </div>
@@ -153,21 +47,27 @@ export default function Index() {
             <div className="space-y-2">
               <div className="flex items-center justify-center space-x-2 text-stackit-primary">
                 <Users className="h-6 w-6" />
-                <span className="text-2xl font-bold">10.2K</span>
+                <span className="text-2xl font-bold">
+                  {countListData.totalUsers}
+                </span>
               </div>
               <p className="text-muted-foreground">Active Members</p>
             </div>
             <div className="space-y-2">
               <div className="flex items-center justify-center space-x-2 text-stackit-blue">
                 <TrendingUp className="h-6 w-6" />
-                <span className="text-2xl font-bold">45.8K</span>
+                <span className="text-2xl font-bold">
+                  {countListData.totalQuestions}
+                </span>
               </div>
               <p className="text-muted-foreground">Questions Asked</p>
             </div>
             <div className="space-y-2">
               <div className="flex items-center justify-center space-x-2 text-stackit-success">
                 <Clock className="h-6 w-6" />
-                <span className="text-2xl font-bold">89%</span>
+                <span className="text-2xl font-bold">
+                  {countListData.answeredQuestionPercentage}%
+                </span>
               </div>
               <p className="text-muted-foreground">Questions Answered</p>
             </div>
@@ -185,10 +85,6 @@ export default function Index() {
                 Latest Questions
               </h2>
               <div className="flex items-center gap-2">
-                <Button variant="outline" size="sm">
-                  <Filter className="h-4 w-4 mr-2" />
-                  Filter
-                </Button>
                 <Button
                   asChild
                   className="bg-stackit-primary hover:bg-stackit-primary/90"
@@ -209,37 +105,25 @@ export default function Index() {
               </TabsList>
 
               <TabsContent value="latest" className="space-y-4">
-                {mockQuestions.map((question) => (
-                  <QuestionCard
-                    key={question.id}
-                    question={question}
-                    isLoggedIn={isLoggedIn}
-                  />
+                {QuestionListData.map((question) => (
+                  <QuestionCard key={question.id} question={question} />
                 ))}
               </TabsContent>
 
               <TabsContent value="trending" className="space-y-4">
-                {mockQuestions
-                  .filter((q) => q.votes > 30)
-                  .map((question) => (
-                    <QuestionCard
-                      key={question.id}
-                      question={question}
-                      isLoggedIn={isLoggedIn}
-                    />
-                  ))}
+                {QuestionListData.filter((q) => q.votes > 30).map(
+                  (question) => (
+                    <QuestionCard key={question.id} question={question} />
+                  )
+                )}
               </TabsContent>
 
               <TabsContent value="unanswered" className="space-y-4">
-                {mockQuestions
-                  .filter((q) => !q.hasAcceptedAnswer)
-                  .map((question) => (
-                    <QuestionCard
-                      key={question.id}
-                      question={question}
-                      isLoggedIn={isLoggedIn}
-                    />
-                  ))}
+                {QuestionListData.filter((q) => !q.hasAcceptedAnswer).map(
+                  (question) => (
+                    <QuestionCard key={question.id} question={question} />
+                  )
+                )}
               </TabsContent>
             </Tabs>
           </div>

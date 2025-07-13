@@ -1,14 +1,14 @@
-const express = require('express')
-const router = express.Router()
-const Question = require('../models/Question')
-const Answer = require('../models/Answer')
-const User = require('../models/User')
-const fetchUserDetails = require('../middleware/fetchUser')
+const express = require("express");
+const router = express.Router();
+const Question = require("../models/Question");
+const Answer = require("../models/Answer");
+const User = require("../models/User");
+const fetchUserDetails = require("../middleware/fetchUser");
 
-router.post('/ask-question', fetchUserDetails, async (req, res) => {
+router.post("/ask-question", fetchUserDetails, async (req, res) => {
   let success = false;
   const { title, description, tags } = req.body;
-  const userId = req.user.id
+  const userId = req.user.id;
 
   try {
     const question = await Question.create({
@@ -20,28 +20,28 @@ router.post('/ask-question', fetchUserDetails, async (req, res) => {
 
     success = true;
     res.status(201).json({ success, question });
-  }
-  catch (error) {
+  } catch (error) {
     console.log(error.message);
     return res.status(500).json({ success, message: "Internal Server Error" });
   }
-})
+});
 
 router.get("/get-all-questions", async (req, res) => {
   let success = false;
 
   try {
-    const questions = await Question.find().populate('userId', 'username profilePhoto').sort({ createdAt: -1 });
+    const questions = await Question.find()
+      .populate("userId", "username profilePhoto")
+      .sort({ createdAt: -1 });
     success = true;
     res.status(200).json({ success, questions });
-  }
-  catch (error) {
+  } catch (error) {
     console.log(error.message);
     return res.status(500).json({ success, message: "Internal Server Error" });
   }
-})
+});
 
-router.post('/add-answer', fetchUserDetails, async (req, res) => {
+router.post("/add-answer", fetchUserDetails, async (req, res) => {
   let success = false;
   const { questionId, content } = req.body;
   const userId = req.user.id;
@@ -62,8 +62,7 @@ router.post('/add-answer', fetchUserDetails, async (req, res) => {
 
     success = true;
     res.status(201).json({ success, answer });
-  }
-  catch (error) {
+  } catch (error) {
     console.log(error.message);
     return res.status(500).json({ success, message: "Internal Server Error" });
   }
@@ -81,7 +80,12 @@ router.post("/accept-answer", fetchUserDetails, async (req, res) => {
     }
 
     if (question.userId.toString() !== userId) {
-      return res.status(403).json({ success, message: "You are not authorized to accept answers for this question" });
+      return res
+        .status(403)
+        .json({
+          success,
+          message: "You are not authorized to accept answers for this question",
+        });
     }
 
     const answer = await Answer.findById(answerId);
@@ -94,12 +98,11 @@ router.post("/accept-answer", fetchUserDetails, async (req, res) => {
 
     success = true;
     res.json({ success, message: "Answer accepted successfully" });
-  }
-  catch (error) {
+  } catch (error) {
     console.log(error.message);
     return res.status(500).json({ success, message: "Internal Server Error" });
   }
-})
+});
 
 router.post("/upvote-answer", fetchUserDetails, async (req, res) => {
   let success = false;
@@ -120,12 +123,11 @@ router.post("/upvote-answer", fetchUserDetails, async (req, res) => {
     await answer.save();
     success = true;
     res.json({ success, message: "Answer upvoted successfully", answer });
-  }
-  catch (error) {
+  } catch (error) {
     console.log(error.message);
     return res.status(500).json({ success, message: "Internal Server Error" });
   }
-})
+});
 
 router.post("/downvote-answer", fetchUserDetails, async (req, res) => {
   let success = false;
@@ -145,29 +147,63 @@ router.post("/downvote-answer", fetchUserDetails, async (req, res) => {
     await answer.save();
     success = true;
     res.json({ success, message: "Answer downvoted successfully", answer });
-  }
-  catch (error) {
+  } catch (error) {
     console.log(error.message);
     return res.status(500).json({ success, message: "Internal Server Error" });
   }
-})
+});
 
 router.get("/getuser", fetchUserDetails, async (req, res) => {
   let success = false;
   const userId = req.user.id;
 
   try {
-    const user = await User.findById(userId).select('-password');
+    const user = await User.findById(userId).select("-password");
     if (!user) {
       return res.status(404).json({ success, message: "User not found" });
     }
     success = true;
     res.json({ success, user });
-  }
-  catch (error) {
+  } catch (error) {
     console.log(error.message);
     return res.status(500).json({ success, message: "Internal Server Error" });
   }
-})
+});
+
+router.get("/get-count", fetchUserDetails, async (req, res) => {
+  let success = false;
+
+  try {
+    const [questionCount, answerCount, userCount] = await Promise.all([
+      Question.countDocuments(),
+      Answer.countDocuments(),
+      User.countDocuments(),
+    ]);
+
+    // Count how many questions have at least one answer
+    const answeredQuestionsCount = await Answer.distinct("questionId").then(
+      (distinctQuestionIds) => distinctQuestionIds.length
+    );
+
+    const answerPercentage =
+      questionCount > 0
+        ? Math.round((answeredQuestionsCount / questionCount) * 100)
+        : 0;
+
+    success = true;
+    res.json({
+      success,
+      counts: {
+        totalQuestions: questionCount,
+        totalAnswers: answerCount,
+        totalUsers: userCount,
+        answeredQuestionPercentage: answerPercentage,
+      },
+    });
+  } catch (error) {
+    console.error("Error in /get-count:", error.message);
+    return res.status(500).json({ success, message: "Internal Server Error" });
+  }
+});
 
 module.exports = router;
